@@ -33,7 +33,7 @@ const AuthenticatedApp = () => {
   }
 
   // Show login page if not authenticated
-  if (!user) {
+  if (!user && import.meta.env.VITE_DEMO_MODE !== 'true') {
     return <Login />;
   }
 
