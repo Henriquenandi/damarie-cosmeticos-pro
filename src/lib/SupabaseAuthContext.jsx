@@ -20,10 +20,22 @@ export const AuthProvider = ({ children }) => {
   const [authError, setAuthError] = useState(null);
 
   useEffect(() => {
+    const DEMO_MODE = import.meta.env.VITE_DEMO_MODE === 'true';
+
     // Get initial session
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
-      setUser(session?.user ?? null);
+    supabase.auth.getSession().then(async ({ data: { session } }) => {
+      if (!session && DEMO_MODE) {
+        // Auto-login as demo user
+        const { data } = await supabase.auth.signInWithPassword({
+          email: import.meta.env.VITE_DEMO_EMAIL || 'demo@damarie.com',
+          password: import.meta.env.VITE_DEMO_PASSWORD || 'Demo@2024',
+        });
+        setSession(data.session);
+        setUser(data.session?.user ?? null);
+      } else {
+        setSession(session);
+        setUser(session?.user ?? null);
+      }
       setIsLoadingAuth(false);
     });
 

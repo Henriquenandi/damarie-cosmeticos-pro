@@ -46,6 +46,9 @@ export const supabaseHelpers = {
   },
 
   async create(table, data) {
+    if (import.meta.env.VITE_DEMO_MODE === 'true') {
+      throw new Error('Modo demonstração — funcionalidade desabilitada')
+    }
     // Generate UUID for id if not provided
     const dataWithId = {
       ...data,
@@ -63,6 +66,9 @@ export const supabaseHelpers = {
   },
 
   async update(table, id, data) {
+    if (import.meta.env.VITE_DEMO_MODE === 'true') {
+      throw new Error('Modo demonstração — funcionalidade desabilitada')
+    }
     const { data: result, error } = await supabase
       .from(table)
       .update(data)
@@ -75,6 +81,9 @@ export const supabaseHelpers = {
   },
 
   async delete(table, id) {
+    if (import.meta.env.VITE_DEMO_MODE === 'true') {
+      throw new Error('Modo demonstração — funcionalidade desabilitada')
+    }
     const { error } = await supabase
       .from(table)
       .delete()

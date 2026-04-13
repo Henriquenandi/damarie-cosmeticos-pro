@@ -42,8 +42,15 @@ export default function Layout({ children, currentPageName }) {
 
   const isActive = (page) => currentPageName === page;
 
+  const isDemoMode = import.meta.env.VITE_DEMO_MODE === 'true'
+
   return (
     <div className="bg-gradient-to-br from-orange-50/30 via-white to-orange-50/50" style={{ minHeight: '100dvh', overscrollBehavior: 'contain' }}>
+      {isDemoMode && (
+        <div className="w-full bg-orange-500 text-white text-center text-xs py-1.5 font-medium tracking-wide z-50">
+          Modo Demonstração — visualização apenas, alterações desabilitadas
+        </div>
+      )}
       <style>{`
         :root {
           --primary: #F97316;
