@@ -1,0 +1,2 @@
+customer_id,customer_name,sale_id,amount,payment_method,payment_date,notes,id,created_date,updated_date,created_by_id,created_by,is_sample
+"696536d5490837c684367045","Tami Cunha ","","141.3","dinheiro","2026-01-13T11:43:55.295Z","","69662ffb52dbf6c5a4923f02","2026-01-13T11:43:55.501000","2026-01-13T11:43:55.501000","6963b453afe3460d12b94a9a","marielemodolon24@gmail.com","false"

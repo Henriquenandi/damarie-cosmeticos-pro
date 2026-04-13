@@ -1,0 +1,2 @@
+mercadoria_id,mercadoria_name,quantity,reason,cost_consumed,kit_id,consumption_date,notes,id,created_date,updated_date,created_by_id,created_by,is_sample
+"69601415a72ac08469782c31","Cesta Redonda 13cm","0.1","Kit Presente","0.375","","2026-01-08T20:46:25.923Z","Venda de kit: kit baruc","696017a243f536702efa4111","2026-01-08T20:46:26.121000","2026-01-08T20:46:26.121000","695c5f50ab63f5b9b84216d2","thebimcare@gmail.com","false"
