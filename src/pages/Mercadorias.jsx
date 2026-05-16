@@ -30,7 +30,7 @@ export default function Mercadorias() {
 
   const { data: mercadorias = [], isLoading } = useQuery({
     queryKey: ['mercadorias'],
-    queryFn: () => base44.entities.Mercadoria.list(),
+    queryFn: () => base44.entities.Mercadoria.list('name'),
   });
 
   const filteredMercadorias = mercadorias.filter(m => {

@@ -1,2 +1,3 @@
-customer_id,customer_name,sale_id,amount,payment_method,payment_date,notes,id,created_date,updated_date,created_by_id,created_by,is_sample
-"696536d5490837c684367045","Tami Cunha ","","141.3","dinheiro","2026-01-13T11:43:55.295Z","","69662ffb52dbf6c5a4923f02","2026-01-13T11:43:55.501000","2026-01-13T11:43:55.501000","6963b453afe3460d12b94a9a","marielemodolon24@gmail.com","false"
+sale_id,amount,notes,customer_name,customer_id,payment_method,payment_date,id,created_date,updated_date,created_by_id,created_by,is_sample
+"","55","","Marieli Rodrigues ","696e97399054f5b7fc40c408","dinheiro","2026-02-18T18:08:06.305Z","69960006e6b5e58653ee1add","2026-02-18T18:08:06.491000","2026-02-18T18:08:06.491000","6963b453afe3460d12b94a9a","marielemodolon24@gmail.com","false"
+"","141.3","","Tami Cunha ","696536d5490837c684367045","dinheiro","2026-01-13T11:43:55.295Z","69662ffb52dbf6c5a4923f02","2026-01-13T11:43:55.501000","2026-01-13T11:43:55.501000","6963b453afe3460d12b94a9a","marielemodolon24@gmail.com","false"

@@ -1,0 +1,5 @@
+sale_id,amount,notes,installment_number,total_installments,due_date,customer_name,customer_id,payment_date,payment_method,status,id,created_date,updated_date,created_by_id,created_by,is_sample
+"69fa584feaa3fdb3ff8e6023","49","","4","4","2026-09-05","Venda Avulsa","","","","pendente","69fa58505335e0aa81faceb2","2026-05-05T20:51:28.534000","2026-05-05T20:51:28.534000","69a02ff63eb6eaa8b459cf17","marielemodolon24@gmail.com","false"
+"69fa584feaa3fdb3ff8e6023","49","","3","4","2026-08-05","Venda Avulsa","","","","pendente","69fa585090beecf4c700feb5","2026-05-05T20:51:28.133000","2026-05-05T20:51:28.133000","69a02ff63eb6eaa8b459cf17","marielemodolon24@gmail.com","false"
+"69fa584feaa3fdb3ff8e6023","49","","2","4","2026-07-05","Venda Avulsa","","","","pendente","69fa584fb6dd7f41b25902a4","2026-05-05T20:51:27.778000","2026-05-05T20:51:27.778000","69a02ff63eb6eaa8b459cf17","marielemodolon24@gmail.com","false"
+"69fa584feaa3fdb3ff8e6023","49","","1","4","2026-06-05","Venda Avulsa","","2026-05-05T20:51:27.321Z","cartao","paga","69fa584ff9d90e0ac27e16ed","2026-05-05T20:51:27.491000","2026-05-05T20:51:27.491000","69a02ff63eb6eaa8b459cf17","marielemodolon24@gmail.com","false"

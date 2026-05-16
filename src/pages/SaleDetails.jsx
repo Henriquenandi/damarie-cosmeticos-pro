@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { base44 } from '@/api/supabaseClient';
 import { useNavigate } from 'react-router-dom';
@@ -46,6 +46,9 @@ export default function SaleDetails() {
   const [deleting, setDeleting] = useState(false);
   const [editingPayment, setEditingPayment] = useState(false);
   const [newPaymentMethod, setNewPaymentMethod] = useState('');
+  const [newCardFeePercent, setNewCardFeePercent] = useState('');
+  const [inlineFeePercent, setInlineFeePercent] = useState('');
+  const [savingFee, setSavingFee] = useState(false);
 
   const params = new URLSearchParams(window.location.search);
   const saleId = params.get('id');
@@ -64,6 +67,10 @@ export default function SaleDetails() {
     queryFn: () => base44.entities.Installment.filter({ sale_id: saleId }),
     enabled: !!saleId,
   });
+
+  useEffect(() => {
+    if (sale) setInlineFeePercent(String(sale.card_fee_percent > 0 ? sale.card_fee_percent : ''));
+  }, [sale]);
 
   const handleDelete = async () => {
     setDeleting(true);
@@ -113,9 +120,14 @@ export default function SaleDetails() {
     }
 
     try {
+      const feePercent = newPaymentMethod === 'cartao' ? (parseFloat(newCardFeePercent) || 0) : 0;
+      const feeAmount = (sale.total_amount || 0) * feePercent / 100;
       const updates = {
         payment_method: newPaymentMethod,
-        status: newPaymentMethod === 'fiado' ? 'pendente' : 'concluida'
+        status: newPaymentMethod === 'fiado' ? 'pendente' : 'concluida',
+        card_fee_percent: feePercent,
+        card_fee_amount: feeAmount,
+        profit: (sale.profit || 0) + (sale.card_fee_amount || 0) - feeAmount,
       };
 
       // If changing FROM fiado, restore customer credit
@@ -145,6 +157,26 @@ export default function SaleDetails() {
       toast.success('Forma de pagamento atualizada!');
     } catch (error) {
       toast.error('Erro ao atualizar');
+    }
+  };
+
+  const handleSaveInlineFee = async () => {
+    const feePercent = parseFloat(inlineFeePercent) || 0;
+    const feeAmount = (sale.total_amount || 0) * feePercent / 100;
+    const originalProfit = (sale.total_amount || 0) - (sale.total_cost || 0);
+    setSavingFee(true);
+    try {
+      await base44.entities.Sale.update(saleId, {
+        card_fee_percent: feePercent,
+        card_fee_amount: feeAmount,
+        profit: originalProfit - feeAmount,
+      });
+      queryClient.invalidateQueries({ queryKey: ['sale', saleId] });
+      toast.success('Taxa atualizada!');
+    } catch (error) {
+      toast.error('Erro ao salvar taxa');
+    } finally {
+      setSavingFee(false);
     }
   };
 
@@ -206,6 +238,7 @@ export default function SaleDetails() {
             onClick={() => {
               setEditingPayment(true);
               setNewPaymentMethod(sale.payment_method);
+              setNewCardFeePercent(sale.card_fee_percent > 0 ? String(sale.card_fee_percent) : '');
             }}
             className="flex items-center gap-3 w-full text-left hover:opacity-75 transition-opacity"
           >
@@ -215,6 +248,9 @@ export default function SaleDetails() {
             <div className="flex-1">
               <p className="text-xs text-slate-400">Pagamento</p>
               <p className="font-medium text-slate-800">{payment.label}</p>
+              {sale.card_fee_percent > 0 && (
+                <p className="text-xs text-red-500">Taxa {sale.card_fee_percent}%</p>
+              )}
             </div>
             <span className="text-xs text-purple-600">Alterar</span>
           </button>
@@ -257,9 +293,33 @@ export default function SaleDetails() {
             })}
           </div>
 
+          {newPaymentMethod === 'cartao' && (
+            <div className="px-1 pb-2">
+              <p className="text-sm font-medium text-slate-700 mb-2">Taxa do Cartão</p>
+              <div className="flex items-center gap-2">
+                <input
+                  type="number"
+                  min="0"
+                  max="20"
+                  step="0.1"
+                  value={newCardFeePercent}
+                  onChange={(e) => setNewCardFeePercent(e.target.value)}
+                  placeholder="0.0"
+                  className="flex-1 border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-purple-300"
+                />
+                <span className="text-slate-500 text-sm font-medium">%</span>
+              </div>
+              {parseFloat(newCardFeePercent) > 0 && (
+                <p className="text-xs text-red-500 mt-1">
+                  Taxa: R$ {((sale.total_amount || 0) * (parseFloat(newCardFeePercent) || 0) / 100).toFixed(2)}
+                </p>
+              )}
+            </div>
+          )}
+
           <AlertDialogFooter>
             <AlertDialogCancel>Cancelar</AlertDialogCancel>
-            <AlertDialogAction 
+            <AlertDialogAction
               onClick={handleUpdatePayment}
               className="bg-purple-500 hover:bg-purple-600"
             >
@@ -314,13 +374,39 @@ export default function SaleDetails() {
           <span className="text-slate-500">Custo</span>
           <span className="text-slate-700">R$ {(sale.total_cost || 0).toFixed(2)}</span>
         </div>
-        <div className="flex justify-between text-emerald-600">
-          <span>Lucro</span>
-          <span className="font-medium">R$ {(sale.profit || 0).toFixed(2)}</span>
-        </div>
-        <div className="flex justify-between pt-3 border-t border-slate-200">
-          <span className="font-bold text-slate-800 text-lg">Total</span>
-          <span className="font-bold text-purple-600 text-lg">R$ {(sale.total_amount || 0).toFixed(2)}</span>
+        {sale.payment_method === 'cartao' && (
+          <div className="flex items-center justify-between gap-3">
+            <span className="text-slate-500 shrink-0">Taxa Cartão</span>
+            <div className="flex items-center gap-2">
+              <input
+                type="number"
+                min="0"
+                max="20"
+                step="0.1"
+                value={inlineFeePercent}
+                onChange={(e) => setInlineFeePercent(e.target.value)}
+                placeholder="0.0"
+                className="w-16 text-right border border-slate-200 rounded-lg px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-blue-300"
+              />
+              <span className="text-slate-500 text-sm">%</span>
+              {parseFloat(inlineFeePercent) > 0 && (
+                <span className="text-red-500 text-sm">
+                  - R$ {((sale.total_amount || 0) * (parseFloat(inlineFeePercent) || 0) / 100).toFixed(2)}
+                </span>
+              )}
+              <button
+                onClick={handleSaveInlineFee}
+                disabled={savingFee}
+                className="text-xs bg-blue-100 text-blue-700 hover:bg-blue-200 px-2 py-1 rounded-lg transition-colors disabled:opacity-50"
+              >
+                {savingFee ? '...' : 'Salvar'}
+              </button>
+            </div>
+          </div>
+        )}
+        <div className="flex justify-between text-emerald-600 pt-3 border-t border-slate-200">
+          <span className="font-bold text-lg">Lucro</span>
+          <span className="font-bold text-lg">R$ {(sale.profit || 0).toFixed(2)}</span>
         </div>
       </div>
 

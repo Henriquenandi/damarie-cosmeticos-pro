@@ -35,7 +35,7 @@ export default function Presentes() {
 
   const { data: presentes = [], isLoading } = useQuery({
     queryKey: ['presentes'],
-    queryFn: () => base44.entities.Presente.list('-created_date'),
+    queryFn: () => base44.entities.Presente.list('name'),
   });
 
   const handleDelete = async () => {
@@ -51,13 +51,21 @@ export default function Presentes() {
     }
   };
 
-  const filteredPresentes = presentes.filter(p => {
-    const matchSearch = !search || 
-      p.name?.toLowerCase().includes(search.toLowerCase());
-    return matchSearch;
-  });
+  const sortKey = (name) => (name || '').replace(/^kit\s+/i, '').toLowerCase();
+
+  const filteredPresentes = presentes
+    .filter(p => {
+      const matchSearch = !search ||
+        p.name?.toLowerCase().includes(search.toLowerCase());
+      return matchSearch;
+    })
+    .sort((a, b) => sortKey(a.name).localeCompare(sortKey(b.name), 'pt-BR'));
 
   const activeKits = presentes.filter(p => p.status === 'active');
+
+  const totalCost = activeKits.reduce((sum, p) => sum + (p.total_cost || 0), 0);
+  const totalFinalPrice = activeKits.reduce((sum, p) => sum + (p.final_price || 0), 0);
+  const totalProfit = activeKits.reduce((sum, p) => sum + (p.estimated_profit || 0), 0);
 
   if (isLoading) {
     return (
@@ -84,6 +92,22 @@ export default function Presentes() {
             <span className="hidden lg:inline">Criar Kit</span>
           </Button>
         </Link>
+      </div>
+
+      {/* Totals Cards */}
+      <div className="grid grid-cols-3 gap-4">
+        <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-2xl p-4 border border-blue-200">
+          <p className="text-sm text-blue-600 mb-1">Custo Total</p>
+          <p className="text-2xl font-bold text-blue-700">R$ {totalCost.toFixed(2)}</p>
+        </div>
+        <div className="bg-gradient-to-br from-pink-50 to-pink-100 rounded-2xl p-4 border border-pink-200">
+          <p className="text-sm text-pink-600 mb-1">Preço Final Total</p>
+          <p className="text-2xl font-bold text-pink-700">R$ {totalFinalPrice.toFixed(2)}</p>
+        </div>
+        <div className="bg-gradient-to-br from-emerald-50 to-emerald-100 rounded-2xl p-4 border border-emerald-200">
+          <p className="text-sm text-emerald-600 mb-1">Lucro Estimado</p>
+          <p className="text-2xl font-bold text-emerald-700">R$ {totalProfit.toFixed(2)}</p>
+        </div>
       </div>
 
       {/* Search */}

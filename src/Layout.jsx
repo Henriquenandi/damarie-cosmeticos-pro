@@ -96,11 +96,11 @@ export default function Layout({ children, currentPageName }) {
           <div className="flex items-center gap-3">
             <img 
               src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/695c5f50ab63f5b9b84216d1/4f31b7e94_8360374a-28eb-4f8b-8a1c-d3c506ca44bd.jpg" 
-              alt="Damariê Presentes" 
+              alt="Damarie Presentes" 
               className="w-10 h-10 rounded-xl object-cover shadow-md"
             />
             <div>
-              <h1 className="font-bold text-slate-800">Damariê Presentes</h1>
+              <h1 className="font-bold text-slate-800">Damarie Presentes</h1>
               <p className="text-xs text-slate-400">Gestão Inteligente</p>
             </div>
           </div>

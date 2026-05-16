@@ -14,6 +14,19 @@ import {
   Check,
 } from 'lucide-react';
 
+/* ──────────────────────────────────────────────────────────────────────────────
+ * Damariê Presentes — Login
+ *
+ * Required fonts (load in index.html or via @fontsource):
+ *   DM Serif Display · Manrope · Caveat
+ *
+ * Recommended tailwind.config.js additions:
+ *   theme.extend.fontFamily.serif  = ['"DM Serif Display"', 'serif']
+ *   theme.extend.fontFamily.sans   = ['Manrope', 'system-ui', 'sans-serif']
+ *   theme.extend.fontFamily.script = ['Caveat', 'cursive']
+ * ────────────────────────────────────────────────────────────────────────────── */
+
+// Brand mark — stylized bow with red heart (matches the Damariê logo)
 function Bow({ size = 28, color = '#fff', heart = '#D9342E', stroke = 2 }) {
   return (
     <svg width={size} height={size * 0.72} viewBox="0 0 200 144" fill="none" aria-hidden="true">
@@ -93,7 +106,7 @@ export default function Login() {
   const [remember, setRemember] = useState(true);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState(false);
-  const [focusField, setFocusField] = useState('');
+  const [focusField, setFocusField] = useState(null);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -121,6 +134,7 @@ export default function Login() {
       className="relative grid min-h-screen w-full overflow-hidden bg-[#FAF3E8] font-sans text-[#2A1A0F]
                  grid-cols-1 md:grid-cols-[1.15fr_1fr]"
     >
+      {/* Inline keyframes that aren't in default Tailwind */}
       <style>{`
         @keyframes floatY   { 0%,100% { transform: translateY(0) rotate(-6deg); }
                               50%     { transform: translateY(-14px) rotate(-2deg); } }
@@ -136,16 +150,9 @@ export default function Login() {
         @keyframes confettiFall {
                               0%   { transform:translateY(-40px) rotate(0);   opacity:1; }
                               100% { transform:translateY(140px) rotate(360deg); opacity:0; } }
-        input:-webkit-autofill,
-        input:-webkit-autofill:hover,
-        input:-webkit-autofill:focus {
-          -webkit-box-shadow: 0 0 0 1000px #ffffff inset !important;
-          box-shadow: 0 0 0 1000px #ffffff inset !important;
-          -webkit-text-fill-color: #2A1A0F !important;
-        }
       `}</style>
 
-      {/* BRAND PANEL (left) */}
+      {/* ────────────────── BRAND PANEL (left) ────────────────── */}
       <aside
         className="relative flex flex-col justify-between overflow-hidden px-8 py-10 text-white
                    md:px-16 md:py-14"
@@ -154,6 +161,7 @@ export default function Login() {
             'radial-gradient(120% 100% at 15% 10%, #EE864A 0%, #E27339 35%, #C85A22 80%, #A8431A 100%)',
         }}
       >
+        {/* gradient lighting overlay */}
         <div
           className="pointer-events-none absolute inset-0"
           style={{
@@ -163,6 +171,7 @@ export default function Login() {
         />
         <FlowingRibbon />
 
+        {/* floating decorations */}
         <div
           className="absolute z-10 animate-[floatY_6s_ease-in-out_infinite]"
           style={{ top: '8%', right: '8%', filter: 'drop-shadow(0 12px 24px rgba(0,0,0,0.18))' }}
@@ -185,9 +194,10 @@ export default function Login() {
           size={16}
         />
 
+        {/* header */}
         <div className="relative z-20 flex items-center gap-4">
-          <div className="flex h-12 w-12 items-center justify-center rounded-2xl border border-white/30 bg-white/15 backdrop-blur-sm overflow-hidden">
-            <img src="/src/assets/damarielogo.jpeg" alt="Damariê" className="h-full w-full object-cover" />
+          <div className="flex h-12 w-12 items-center justify-center rounded-2xl border border-white/30 bg-white/15 backdrop-blur-sm">
+            <Bow size={28} />
           </div>
           <div>
             <div className="font-serif text-[22px] leading-none">
@@ -200,6 +210,7 @@ export default function Login() {
           </div>
         </div>
 
+        {/* hero */}
         <div className="relative z-20 max-w-xl">
           <span className="inline-flex items-center gap-2 rounded-full border border-white/25 bg-white/15 py-1.5 pl-2 pr-3.5 text-[11px] font-medium uppercase tracking-[0.15em]">
             <span className="h-1.5 w-1.5 rounded-full bg-white" />
@@ -216,6 +227,7 @@ export default function Login() {
           </p>
         </div>
 
+        {/* footer */}
         <div className="relative z-20 flex flex-wrap items-end justify-between gap-6">
           <div className="max-w-sm border-l-2 border-white/40 pl-4">
             <p className="m-0 mb-2 font-serif text-[18px] italic leading-snug">
@@ -225,11 +237,32 @@ export default function Login() {
               — Damariê · desde 2024
             </small>
           </div>
+          <div className="hidden gap-7 text-right md:flex">
+            <div>
+              <div className="font-serif text-[32px] leading-none">2.4k</div>
+              <div className="mt-1 text-[10.5px] uppercase tracking-[0.16em] opacity-80">
+                presentes
+                <br />
+                entregues
+              </div>
+            </div>
+            <div>
+              <div className="font-serif text-[32px] leading-none">
+                98<span className="text-lg">%</span>
+              </div>
+              <div className="mt-1 text-[10.5px] uppercase tracking-[0.16em] opacity-80">
+                clientes
+                <br />
+                encantados
+              </div>
+            </div>
+          </div>
         </div>
       </aside>
 
-      {/* FORM PANEL (right) */}
+      {/* ────────────────── FORM PANEL (right) ────────────────── */}
       <main className="relative flex items-center justify-center px-6 py-10 md:p-12">
+        {/* dotted texture */}
         <div
           className="pointer-events-none absolute inset-0 opacity-60"
           style={{
@@ -257,16 +290,6 @@ export default function Login() {
             </div>
           )}
 
-          <div className="mb-8 flex items-center gap-3">
-            <div className="h-14 w-14 overflow-hidden rounded-2xl shadow-md">
-              <img src="/src/assets/damarielogo.jpeg" alt="Damariê" className="h-full w-full object-cover" />
-            </div>
-            <div>
-              <div className="font-serif text-[20px] leading-tight text-[#2A1A0F]">Damariê presentes</div>
-              <div className="text-[11px] uppercase tracking-[0.16em] text-[#5B4538]">Boutique de presentes</div>
-            </div>
-          </div>
-
           <span className="mb-2 inline-flex -rotate-2 items-center gap-2 font-script text-2xl text-[#C85A22]">
             <span className="inline-block h-px w-7 bg-[#C85A22]" />
             Olá, que bom te ver
@@ -293,6 +316,7 @@ export default function Login() {
               </div>
             )}
 
+            {/* EMAIL */}
             <div className="mb-5">
               <label className="mb-2.5 block text-[11px] font-semibold uppercase tracking-[0.16em] text-[#5B4538]">
                 Email
@@ -313,7 +337,7 @@ export default function Login() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   onFocus={() => setFocusField('email')}
-                  onBlur={() => setFocusField('')}
+                  onBlur={() => setFocusField(null)}
                   disabled={isLoadingAuth}
                   autoComplete="email"
                   className="h-full border-0 bg-transparent px-3 text-[15px] tracking-wide shadow-none focus-visible:ring-0"
@@ -321,6 +345,7 @@ export default function Login() {
               </div>
             </div>
 
+            {/* PASSWORD */}
             <div className="mb-5">
               <label className="mb-2.5 block text-[11px] font-semibold uppercase tracking-[0.16em] text-[#5B4538]">
                 Senha
@@ -341,7 +366,7 @@ export default function Login() {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   onFocus={() => setFocusField('pwd')}
-                  onBlur={() => setFocusField('')}
+                  onBlur={() => setFocusField(null)}
                   disabled={isLoadingAuth}
                   autoComplete="current-password"
                   className="h-full border-0 bg-transparent px-3 text-[15px] tracking-wide shadow-none focus-visible:ring-0"
@@ -358,6 +383,7 @@ export default function Login() {
               </div>
             </div>
 
+            {/* REMEMBER + FORGOT */}
             <div className="mb-7 flex items-center justify-between">
               <label className="flex cursor-pointer select-none items-center gap-2 text-[13px] text-[#5B4538]">
                 <span
@@ -387,6 +413,7 @@ export default function Login() {
               </a>
             </div>
 
+            {/* SUBMIT */}
             <Button
               type="submit"
               disabled={isLoadingAuth}
@@ -420,6 +447,7 @@ export default function Login() {
             </Button>
           </form>
 
+          {/* FOOTER */}
           <div className="mt-7 flex flex-col items-center gap-2.5 text-[11.5px] text-[#5B4538]">
             <span className="inline-flex items-center gap-1.5">
               <Shield size={13} className="text-[#C85A22]" />

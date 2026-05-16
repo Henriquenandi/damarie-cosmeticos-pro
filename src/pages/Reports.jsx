@@ -117,11 +117,6 @@ export default function Reports() {
   const prevDespesas = previousDespesas.reduce((sum, d) => sum + (d.amount || 0), 0);
   const prevLucroLiquido = prevProfit - prevDespesas;
 
-  // Growth calculations
-  const revenueGrowth = prevRevenue > 0 ? ((totalRevenue - prevRevenue) / prevRevenue) * 100 : 0;
-  const profitGrowth = prevProfit > 0 ? ((totalProfit - prevProfit) / prevProfit) * 100 : 0;
-  const lucroLiquidoGrowth = prevLucroLiquido > 0 ? ((lucroLiquido - prevLucroLiquido) / prevLucroLiquido) * 100 : 0;
-
   // Calculate stats
   const totalRevenue = filteredSales.reduce((sum, s) => sum + (s.total_amount || 0), 0);
   const totalProfit = filteredSales.reduce((sum, s) => sum + (s.profit || 0), 0);
@@ -129,6 +124,11 @@ export default function Reports() {
   const totalDespesas = filteredDespesas.reduce((sum, d) => sum + (d.amount || 0), 0);
   const lucroLiquido = totalProfit - totalDespesas;
   const avgTicket = filteredSales.length > 0 ? totalRevenue / filteredSales.length : 0;
+
+  // Growth calculations
+  const revenueGrowth = prevRevenue > 0 ? ((totalRevenue - prevRevenue) / prevRevenue) * 100 : 0;
+  const profitGrowth = prevProfit > 0 ? ((totalProfit - prevProfit) / prevProfit) * 100 : 0;
+  const lucroLiquidoGrowth = prevLucroLiquido > 0 ? ((lucroLiquido - prevLucroLiquido) / prevLucroLiquido) * 100 : 0;
 
   // Sales by week
   const salesByWeek = {};
@@ -599,6 +599,18 @@ export default function Reports() {
         </div>
       </div>
 
+      {/* Stock Value */}
+      <div className="grid grid-cols-2 gap-4">
+        <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-2xl p-4 border border-blue-200">
+          <p className="text-sm text-blue-600 mb-1">Valor em Estoque (Custo)</p>
+          <p className="text-2xl font-bold text-blue-700">R$ {stockValue.toFixed(2)}</p>
+        </div>
+        <div className="bg-gradient-to-br from-emerald-50 to-emerald-100 rounded-2xl p-4 border border-emerald-200">
+          <p className="text-sm text-emerald-600 mb-1">Valor em Estoque (Venda)</p>
+          <p className="text-2xl font-bold text-emerald-700">R$ {stockSellingValue.toFixed(2)}</p>
+        </div>
+      </div>
+
       {/* Best Sellers */}
       <div className="bg-white rounded-2xl border border-slate-100 overflow-hidden">
         <div className="p-4 border-b border-slate-100">
@@ -661,17 +673,6 @@ export default function Reports() {
         </div>
       )}
 
-      {/* Stock Value */}
-      <div className="grid grid-cols-2 gap-4">
-        <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-2xl p-4 border border-blue-200">
-          <p className="text-sm text-blue-600 mb-1">Valor em Estoque (Custo)</p>
-          <p className="text-2xl font-bold text-blue-700">R$ {stockValue.toFixed(2)}</p>
-        </div>
-        <div className="bg-gradient-to-br from-emerald-50 to-emerald-100 rounded-2xl p-4 border border-emerald-200">
-          <p className="text-sm text-emerald-600 mb-1">Valor em Estoque (Venda)</p>
-          <p className="text-2xl font-bold text-emerald-700">R$ {stockSellingValue.toFixed(2)}</p>
-        </div>
-      </div>
       </div>
       );
       }

@@ -67,6 +67,7 @@ export default function NewSale() {
   const [newCustomerPhone, setNewCustomerPhone] = useState('');
   const [voucherCode, setVoucherCode] = useState('');
   const [appliedVoucher, setAppliedVoucher] = useState(null);
+  const [cardFeePercent, setCardFeePercent] = useState('');
 
   const { data: products = [] } = useQuery({
     queryKey: ['products'],
@@ -186,7 +187,8 @@ export default function NewSale() {
   const voucherDiscount = appliedVoucher ? calculateVoucherDiscount(appliedVoucher, subtotal) : 0;
   const totalAmount = Math.max(0, subtotal - voucherDiscount);
   const totalCost = cart.reduce((sum, i) => sum + (i.cost_price * i.quantity), 0);
-  const totalProfit = totalAmount - totalCost;
+  const cardFeeAmount = paymentMethod === 'cartao' ? totalAmount * (parseFloat(cardFeePercent) || 0) / 100 : 0;
+  const totalProfit = totalAmount - totalCost - cardFeeAmount;
 
   function calculateVoucherDiscount(voucher, amount) {
     if (voucher.discount_type === 'percentage') {
@@ -295,7 +297,9 @@ export default function NewSale() {
         status: paymentMethod === 'fiado' ? 'pendente' : 'concluida',
         sale_date: new Date().toISOString(),
         voucher_code: appliedVoucher?.code || null,
-        voucher_discount: voucherDiscount
+        voucher_discount: voucherDiscount,
+        card_fee_percent: paymentMethod === 'cartao' ? (parseFloat(cardFeePercent) || 0) : 0,
+        card_fee_amount: cardFeeAmount
       };
 
       const sale = await base44.entities.Sale.create(saleData);
@@ -735,6 +739,12 @@ export default function NewSale() {
                     <span className="text-purple-600">- R$ {voucherDiscount.toFixed(2)}</span>
                   </div>
                 )}
+                {cardFeeAmount > 0 && (
+                  <div className="flex justify-between text-sm">
+                    <span className="text-red-500">Taxa Cartão ({cardFeePercent}%)</span>
+                    <span className="text-red-500">- R$ {cardFeeAmount.toFixed(2)}</span>
+                  </div>
+                )}
                 <div className="flex justify-between text-sm">
                   <span className="text-slate-500">Lucro estimado</span>
                   <span className="text-emerald-600">R$ {totalProfit.toFixed(2)}</span>
@@ -761,6 +771,7 @@ export default function NewSale() {
                   onClick={() => {
                     setPaymentMethod(method.value);
                     if (method.value === 'fiado') setInstallments(1);
+                    if (method.value !== 'cartao') setCardFeePercent('');
                   }}
                   className={`flex flex-col items-center gap-1 p-3 rounded-xl border-2 transition-all ${
                     paymentMethod === method.value 
@@ -810,7 +821,31 @@ export default function NewSale() {
             </div>
           )}
 
-          <Button 
+          {paymentMethod === 'cartao' && (
+            <div>
+              <Label className="text-slate-700 mb-2 block">Taxa do Cartão</Label>
+              <div className="flex items-center gap-2">
+                <Input
+                  type="number"
+                  min="0"
+                  max="20"
+                  step="0.1"
+                  value={cardFeePercent}
+                  onChange={(e) => setCardFeePercent(e.target.value)}
+                  placeholder="0.0"
+                  className="flex-1"
+                />
+                <span className="text-slate-500 text-sm font-medium">%</span>
+              </div>
+              {cardFeeAmount > 0 && (
+                <p className="text-xs text-red-500 mt-1">
+                  Taxa: R$ {cardFeeAmount.toFixed(2)} • Lucro líquido: R$ {totalProfit.toFixed(2)}
+                </p>
+              )}
+            </div>
+          )}
+
+          <Button
             onClick={handleSale}
             disabled={saving || !paymentMethod}
             className="w-full h-14 text-lg bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700 shadow-lg"
