@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useAuth } from '@/lib/SupabaseAuthContext';
+import damarieLogoSrc from '@/assets/damarielogo.jpeg';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import {
@@ -187,7 +188,7 @@ export default function Login() {
 
         <div className="relative z-20 flex items-center gap-4">
           <div className="flex h-12 w-12 items-center justify-center rounded-2xl border border-white/30 bg-white/15 backdrop-blur-sm overflow-hidden">
-            <img src="/src/assets/damarielogo.jpeg" alt="Damariê" className="h-full w-full object-cover" />
+            <img src={damarieLogoSrc} alt="Damariê" className="h-full w-full object-cover" />
           </div>
           <div>
             <div className="font-serif text-[22px] leading-none">
@@ -259,7 +260,7 @@ export default function Login() {
 
           <div className="mb-8 flex items-center gap-3">
             <div className="h-14 w-14 overflow-hidden rounded-2xl shadow-md">
-              <img src="/src/assets/damarielogo.jpeg" alt="Damariê" className="h-full w-full object-cover" />
+              <img src={damarieLogoSrc} alt="Damariê" className="h-full w-full object-cover" />
             </div>
             <div>
               <div className="font-serif text-[20px] leading-tight text-[#2A1A0F]">Damariê presentes</div>
