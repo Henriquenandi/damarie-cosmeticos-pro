@@ -13,16 +13,17 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { 
+import {
   Wallet,
   Plus,
   Search,
   TrendingDown,
-  Calendar,
   AlertCircle,
   CheckCircle2,
-  ChevronRight,
-  Trash2
+  Trash2,
+  Pencil,
+  RefreshCw,
+  Calendar
 } from 'lucide-react';
 import { Skeleton } from "@/components/ui/skeleton";
 import {
@@ -232,52 +233,54 @@ export default function DespesasMensais() {
                 {month}
               </h3>
               {despesas.map((despesa) => (
-                <div 
+                <div
                   key={despesa.id}
-                  className="bg-white rounded-xl border border-slate-100 hover:shadow-sm transition-all overflow-hidden"
+                  className="bg-white rounded-xl border border-slate-100 hover:border-slate-200 hover:shadow-sm transition-all"
                 >
-                  <div className="flex items-center gap-4 p-4">
-                    <div className="w-12 h-12 rounded-lg bg-slate-100 flex items-center justify-center flex-shrink-0">
-                      <TrendingDown className="w-6 h-6 text-slate-600" />
-                    </div>
+                  <div className="flex items-center gap-3 px-4 py-3">
+                    {/* Status dot */}
+                    <div className={`w-2 h-2 rounded-full flex-shrink-0 ${despesa.status === 'pago' ? 'bg-emerald-400' : 'bg-amber-400'}`} />
 
+                    {/* Info */}
                     <div className="flex-1 min-w-0">
-                      <p className="font-medium text-slate-800 truncate">{despesa.description}</p>
-                      <div className="flex items-center gap-2 mt-1 flex-wrap">
-                        <Badge className={categoryColors[despesa.category] || categoryColors['Outros']}>
+                      <div className="flex items-center gap-2">
+                        <p className="font-medium text-slate-800 text-sm truncate">{despesa.description}</p>
+                        {despesa.recurrence !== 'unico' && (
+                          <RefreshCw className="w-3 h-3 text-slate-400 flex-shrink-0" title={despesa.recurrence} />
+                        )}
+                      </div>
+                      <div className="flex items-center gap-2 mt-0.5">
+                        <span className={`text-[11px] px-1.5 py-0.5 rounded font-medium ${categoryColors[despesa.category] || categoryColors['Outros']}`}>
                           {despesa.category}
-                        </Badge>
-                        <Badge className={despesa.status === 'pago' ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-100 text-amber-700'}>
-                          {despesa.status === 'pago' ? 'Pago' : 'Pendente'}
-                        </Badge>
-                        <Badge variant="outline" className="text-xs">
-                          {despesa.recurrence === 'mensal' ? 'Mensal' : despesa.recurrence === 'anual' ? 'Anual' : 'Único'}
-                        </Badge>
+                        </span>
+                        <span className="text-[11px] text-slate-400">
+                          {moment(despesa.payment_date).format('DD/MM/YY')}
+                        </span>
                       </div>
                     </div>
 
-                    <div className="text-right flex-shrink-0">
-                      <p className="font-bold text-red-600">R$ {(despesa.amount || 0).toFixed(2)}</p>
-                      <p className="text-xs text-slate-400">
-                        {moment(despesa.payment_date).format('DD/MM/YYYY')}
+                    {/* Amount */}
+                    <div className="text-right flex-shrink-0 mr-2">
+                      <p className="font-bold text-sm text-red-600">R$ {(despesa.amount || 0).toFixed(2)}</p>
+                      <p className={`text-[11px] font-medium ${despesa.status === 'pago' ? 'text-emerald-600' : 'text-amber-600'}`}>
+                        {despesa.status === 'pago' ? 'Pago' : 'Pendente'}
                       </p>
                     </div>
-                  </div>
 
-                  <div className="flex gap-2 px-4 pb-4">
-                    <Link to={createPageUrl('DespesaMensalForm') + `?id=${despesa.id}`} className="flex-1">
-                      <Button variant="outline" size="sm" className="w-full">
-                        Editar
-                      </Button>
-                    </Link>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => setDespesaToDelete(despesa)}
-                      className="text-red-500 hover:bg-red-50 hover:text-red-600"
-                    >
-                      <Trash2 className="w-4 h-4" />
-                    </Button>
+                    {/* Actions */}
+                    <div className="flex items-center gap-1 flex-shrink-0">
+                      <Link to={createPageUrl('DespesaMensalForm') + `?id=${despesa.id}`}>
+                        <button className="p-1.5 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition-colors">
+                          <Pencil className="w-3.5 h-3.5" />
+                        </button>
+                      </Link>
+                      <button
+                        onClick={() => setDespesaToDelete(despesa)}
+                        className="p-1.5 rounded-lg text-slate-400 hover:text-red-500 hover:bg-red-50 transition-colors"
+                      >
+                        <Trash2 className="w-3.5 h-3.5" />
+                      </button>
+                    </div>
                   </div>
                 </div>
               ))}
