@@ -3,11 +3,10 @@ import { Link, useLocation } from 'react-router-dom';
 import { createPageUrl } from './utils';
 import { useAuth } from '@/lib/SupabaseAuthContext';
 import { Button } from "@/components/ui/button";
-import { 
-        LayoutDashboard, 
-        Package, 
-        ShoppingCart, 
-        Users, 
+import {
+        LayoutDashboard,
+        Package,
+        ShoppingCart,
         Plus,
         BarChart3,
         Cake,
@@ -28,7 +27,6 @@ export default function Layout({ children, currentPageName }) {
     { name: 'Dashboard', icon: LayoutDashboard, page: 'Dashboard' },
     { name: 'Produtos', icon: Package, page: 'Products' },
     { name: 'Vendas', icon: ShoppingCart, page: 'Sales' },
-    { name: 'Clientes', icon: Users, page: 'Customers' },
     { name: 'Mercadorias', icon: Package2, page: 'Mercadorias' },
     { name: 'Kits', icon: Gift, page: 'Presentes' },
     { name: 'Catálogo', icon: ShoppingCart, page: 'Catalogo' },

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useSales } from '@/hooks/useSupabase';
+import { useSales, useCustomers } from '@/hooks/useSupabase';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import EmptyState from '@/components/ui/EmptyState';
@@ -31,7 +31,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import moment from 'moment';
 import { useNavigate } from 'react-router-dom';
 import CustomerForm from '@/components/customers/CustomerForm';
-import { UserPlus } from 'lucide-react';
+import { UserPlus, Users } from 'lucide-react';
 
 const paymentIcons = {
   dinheiro: Banknote,
@@ -56,8 +56,11 @@ const paymentLabels = {
 
 export default function Sales() {
   const navigate = useNavigate();
+  const [activeTab, setActiveTab] = useState('vendas');
   const [showNewCustomer, setShowNewCustomer] = useState(false);
   const [search, setSearch] = useState('');
+  const [customerSearch, setCustomerSearch] = useState('');
+  const { data: customers = [] } = useCustomers();
   const [paymentFilter, setPaymentFilter] = useState('');
   const [periodFilter, setPeriodFilter] = useState('');
   const [showFilters, setShowFilters] = useState(false);
@@ -115,13 +118,20 @@ export default function Sales() {
   }
 
 
+  const filteredCustomers = customers.filter(c =>
+    !customerSearch || c.name?.toLowerCase().includes(customerSearch.toLowerCase()) ||
+    c.phone?.includes(customerSearch)
+  );
+
   return (
     <div className="p-4 lg:p-8 space-y-6 lg:pb-6">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-slate-800">Histórico de Vendas</h1>
-          <p className="text-slate-500 text-sm">{filteredSales.length} vendas</p>
+          <h1 className="text-2xl font-bold text-slate-800">Vendas</h1>
+          <p className="text-slate-500 text-sm">
+            {activeTab === 'vendas' ? `${filteredSales.length} vendas` : `${filteredCustomers.length} clientes`}
+          </p>
         </div>
         <div className="flex items-center gap-2">
           <Button
@@ -142,6 +152,28 @@ export default function Sales() {
         </div>
       </div>
 
+      {/* Tabs */}
+      <div className="flex gap-1 bg-slate-100 rounded-xl p-1 w-fit">
+        <button
+          onClick={() => setActiveTab('vendas')}
+          className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+            activeTab === 'vendas' ? 'bg-white text-purple-700 shadow-sm' : 'text-slate-500 hover:text-slate-700'
+          }`}
+        >
+          <ShoppingCart className="w-4 h-4" />
+          Histórico de Vendas
+        </button>
+        <button
+          onClick={() => setActiveTab('clientes')}
+          className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+            activeTab === 'clientes' ? 'bg-white text-purple-700 shadow-sm' : 'text-slate-500 hover:text-slate-700'
+          }`}
+        >
+          <Users className="w-4 h-4" />
+          Todos os Clientes
+        </button>
+      </div>
+
       <Dialog open={showNewCustomer} onOpenChange={setShowNewCustomer}>
         <DialogContent className="max-w-lg">
           <DialogHeader>
@@ -154,6 +186,60 @@ export default function Sales() {
         </DialogContent>
       </Dialog>
 
+      {/* Customers Tab */}
+      {activeTab === 'clientes' && (
+        <div className="space-y-4">
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+            <Input
+              placeholder="Buscar por nome ou telefone..."
+              value={customerSearch}
+              onChange={(e) => setCustomerSearch(e.target.value)}
+              className="pl-10"
+            />
+          </div>
+          <div className="space-y-2">
+            {filteredCustomers.length === 0 ? (
+              <div className="text-center py-12 text-slate-400">
+                <Users className="w-10 h-10 mx-auto mb-2 opacity-40" />
+                <p>Nenhum cliente encontrado</p>
+              </div>
+            ) : (
+              filteredCustomers.map(customer => (
+                <Link
+                  key={customer.id}
+                  to={createPageUrl('CustomerDetails') + `?id=${customer.id}`}
+                  className="flex items-center gap-4 p-4 bg-white rounded-2xl border border-slate-100 hover:border-purple-200 transition-all"
+                >
+                  <div className="w-10 h-10 rounded-xl bg-purple-100 flex items-center justify-center flex-shrink-0">
+                    <span className="font-bold text-purple-600">
+                      {customer.name?.charAt(0).toUpperCase()}
+                    </span>
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="font-medium text-slate-800">{customer.name}</p>
+                    <p className="text-sm text-slate-400">{customer.phone || 'Sem telefone'}</p>
+                  </div>
+                  <div className="text-right flex-shrink-0">
+                    {customer.credit_balance > 0 && (
+                      <span className="text-xs bg-amber-100 text-amber-700 px-2 py-1 rounded-full font-medium">
+                        Fiado: R$ {(customer.credit_balance || 0).toFixed(2)}
+                      </span>
+                    )}
+                    {customer.total_purchases > 0 && (
+                      <p className="text-xs text-slate-400 mt-1">R$ {(customer.total_purchases || 0).toFixed(2)} em compras</p>
+                    )}
+                  </div>
+                  <ChevronRight className="w-4 h-4 text-slate-300 flex-shrink-0" />
+                </Link>
+              ))
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* Vendas Tab Content */}
+      {activeTab === 'vendas' && <div className="space-y-6">
       {/* Summary Cards */}
       <div className="grid grid-cols-2 gap-4">
         <div className="bg-gradient-to-br from-purple-500 to-purple-600 rounded-2xl p-4 text-white">
@@ -320,6 +406,7 @@ export default function Sales() {
           })}
         </div>
       )}
+      </div>}
     </div>
   );
 }
