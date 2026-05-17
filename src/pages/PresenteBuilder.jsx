@@ -345,7 +345,7 @@ export default function PresenteBuilder() {
               <SelectValue placeholder="+ Adicionar produto" />
             </SelectTrigger>
             <SelectContent>
-              {products.map(p => (
+              {[...products].sort((a, b) => a.name.localeCompare(b.name, 'pt-BR')).map(p => (
                 <SelectItem key={p.id} value={p.id}>{p.name}</SelectItem>
               ))}
             </SelectContent>
