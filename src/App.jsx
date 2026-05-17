@@ -9,6 +9,8 @@ import PageNotFound from './lib/PageNotFound';
 import { AuthProvider, useAuth } from '@/lib/SupabaseAuthContext';
 import UserNotRegisteredError from '@/components/UserNotRegisteredError';
 import Login from '@/pages/Login';
+import StorefrontLayout from '@/storefront/StorefrontLayout';
+import StorefrontHome from '@/storefront/StorefrontHome';
 
 const { Pages, Layout, mainPage } = pagesConfig;
 const mainPageKey = mainPage ?? Object.keys(Pages)[0];
@@ -77,7 +79,19 @@ function App() {
       <QueryClientProvider client={queryClientInstance}>
         <Router>
           <NavigationTracker />
-          <AuthenticatedApp />
+          <Routes>
+            {/* Public storefront — no auth required */}
+            <Route
+              path="/loja"
+              element={
+                <StorefrontLayout>
+                  <StorefrontHome />
+                </StorefrontLayout>
+              }
+            />
+            {/* Protected admin routes */}
+            <Route path="/*" element={<AuthenticatedApp />} />
+          </Routes>
         </Router>
         <Toaster />
         <SonnerToaster richColors position="top-center" />
