@@ -399,7 +399,7 @@ export default function PresenteBuilder() {
               <SelectValue placeholder="+ Adicionar mercadoria" />
             </SelectTrigger>
             <SelectContent>
-              {mercadorias.map(m => (
+              {[...mercadorias].sort((a, b) => a.name.localeCompare(b.name, 'pt-BR')).map(m => (
                 <SelectItem key={m.id} value={m.id}>
                   {m.name} ({m.unit === 'METRO' ? 'm' : 'un'})
                 </SelectItem>
