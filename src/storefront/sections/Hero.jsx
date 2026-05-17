@@ -191,37 +191,6 @@ export default function Hero() {
               </div>
             </div>
 
-            {/* Orbiting icons */}
-            {[
-              { emoji: '🌸', angle: -30 },
-              { emoji: '✨', angle: 42 },
-              { emoji: '🧴', angle: 130 },
-              { emoji: '💄', angle: 210 },
-            ].map(({ emoji, angle }, i) => {
-              const rad = (angle * Math.PI) / 180;
-              const r = 175;
-              const x = Math.cos(rad) * r;
-              const y = Math.sin(rad) * r;
-              return (
-                <motion.div
-                  key={i}
-                  initial={{ opacity: 0, scale: 0 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  transition={{ delay: 0.5 + i * 0.12, type: 'spring', stiffness: 200 }}
-                  whileHover={{ scale: 1.2 }}
-                  className="absolute w-11 h-11 rounded-full flex items-center justify-center text-lg shadow-lg"
-                  style={{
-                    background: 'white',
-                    top: '50%',
-                    left: '50%',
-                    transform: `translate(calc(-50% + ${x}px), calc(-50% + ${y}px))`,
-                    boxShadow: '0 4px 16px rgba(226,115,57,0.15)',
-                  }}
-                >
-                  {emoji}
-                </motion.div>
-              );
-            })}
           </motion.div>
 
           {/* Name badge */}
