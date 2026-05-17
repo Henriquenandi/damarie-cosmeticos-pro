@@ -28,7 +28,7 @@ import {
 } from 'lucide-react';
 import { Skeleton } from "@/components/ui/skeleton";
 import moment from 'moment';
-import NewSaleView from '@/components/sales/NewSaleView';
+import { useNavigate } from 'react-router-dom';
 
 const paymentIcons = {
   dinheiro: Banknote,
@@ -52,7 +52,7 @@ const paymentLabels = {
 };
 
 export default function Sales() {
-  const [viewMode, setViewMode] = useState('new');
+  const navigate = useNavigate();
   const [search, setSearch] = useState('');
   const [paymentFilter, setPaymentFilter] = useState('');
   const [periodFilter, setPeriodFilter] = useState('');
@@ -110,31 +110,6 @@ export default function Sales() {
     );
   }
 
-  if (viewMode === 'new') {
-    return (
-      <div>
-        <div className="bg-white border-b border-slate-100 p-4 lg:px-8">
-          <div className="grid grid-cols-2 gap-3 max-w-md">
-            <Button
-              className="bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700 h-12"
-            >
-              <Plus className="w-5 h-5 mr-2" />
-              Nova Venda
-            </Button>
-            <Button
-              variant="outline"
-              onClick={() => setViewMode('history')}
-              className="border-2 h-12"
-            >
-              <History className="w-5 h-5 mr-2" />
-              Ver Histórico
-            </Button>
-          </div>
-        </div>
-        <NewSaleView onComplete={() => setViewMode('history')} />
-      </div>
-    );
-  }
 
   return (
     <div className="p-4 lg:p-8 space-y-6 lg:pb-6">
@@ -145,7 +120,7 @@ export default function Sales() {
           <p className="text-slate-500 text-sm">{filteredSales.length} vendas</p>
         </div>
         <Button
-          onClick={() => setViewMode('new')}
+          onClick={() => navigate(createPageUrl('NewSale'))}
           className="bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700"
         >
           <Plus className="w-5 h-5 lg:mr-2" />
