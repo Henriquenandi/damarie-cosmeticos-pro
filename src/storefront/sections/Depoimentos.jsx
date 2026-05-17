@@ -15,7 +15,7 @@ const depoimentos = [
     nome: 'Fernanda Lima',
     nota: 5,
     texto:
-      'Atendimento incrível! A Damarie me ajudou a montar o kit perfeito para o Dia das Mães. Chegou na data combinada, super bem embalado. Recomendo demais!',
+      'Atendimento incrível! A Mariele me ajudou a montar o kit perfeito para o Dia das Mães. Chegou na data combinada, super bem embalado. Recomendo demais!',
     inicial: 'F',
     cor: '#FCE7F3',
     corInicial: '#DB2777',
