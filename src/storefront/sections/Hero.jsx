@@ -1,5 +1,6 @@
 import { motion } from 'framer-motion';
 import { ArrowRight, Star, Heart, Sparkles } from 'lucide-react';
+import ownerPhoto from '@/assets/Image.jpeg';
 
 const WHATSAPP = '5548998506916';
 const WHATSAPP_URL = `https://wa.me/${WHATSAPP}?text=Ol%C3%A1%2C%20quero%20conhecer%20os%20produtos%20da%20Damarie!`;
@@ -148,52 +149,58 @@ export default function Hero() {
         </div>
 
         {/* Right: Visual */}
-        <div className="relative flex items-center justify-center">
-          {/* Main decorative shape */}
+        <div className="relative flex items-center justify-center py-10">
+          {/* Outer glow */}
+          <div
+            className="absolute w-80 h-80 md:w-[420px] md:h-[420px] rounded-full opacity-30 pointer-events-none"
+            style={{
+              background: 'radial-gradient(circle, #E27339 0%, transparent 70%)',
+            }}
+          />
+
+          {/* Main photo frame */}
           <motion.div
             initial={{ opacity: 0, scale: 0.85 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.9, ease: 'easeOut', delay: 0.2 }}
-            className="relative w-72 h-72 md:w-96 md:h-96"
+            className="relative w-64 h-64 md:w-80 md:h-80"
           >
-            {/* Outer ring */}
-            <div
-              className="absolute inset-0 rounded-full border-2 border-dashed opacity-30"
+            {/* Spinning dashed ring */}
+            <motion.div
+              animate={{ rotate: 360 }}
+              transition={{ duration: 20, repeat: Infinity, ease: 'linear' }}
+              className="absolute -inset-5 rounded-full border-2 border-dashed opacity-25"
               style={{ borderColor: '#E27339' }}
             />
-            {/* Inner circle */}
+
+            {/* Gradient border ring */}
             <div
-              className="absolute inset-8 rounded-full flex items-center justify-center"
+              className="absolute -inset-2 rounded-full"
               style={{
-                background: 'linear-gradient(145deg, #FDE8D8, #FCEBD9)',
-                boxShadow: '0 20px 60px rgba(226,115,57,0.2)',
+                background: 'linear-gradient(135deg, #E27339, #c85e2a, #F5A97A, #E27339)',
+                padding: 3,
               }}
             >
-              {/* Center icon */}
-              <div className="text-center">
-                <motion.div
-                  animate={{ y: [-6, 6, -6] }}
-                  transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
-                  className="text-7xl mb-3"
-                >
-                  🎁
-                </motion.div>
-                <p className="font-script text-2xl" style={{ color: '#E27339' }}>
-                  com carinho
-                </p>
+              <div className="w-full h-full rounded-full overflow-hidden"
+                style={{ background: '#FAF3E8' }}>
+                <img
+                  src={ownerPhoto}
+                  alt="Mariele — Damarie Presentes"
+                  className="w-full h-full object-cover object-top"
+                />
               </div>
             </div>
 
             {/* Orbiting icons */}
             {[
-              { emoji: '🌸', angle: 0, radius: 1 },
-              { emoji: '✨', angle: 72, radius: 1 },
-              { emoji: '🧴', angle: 144, radius: 1 },
-              { emoji: '💄', angle: 216, radius: 1 },
-              { emoji: '🎀', angle: 288, radius: 1 },
+              { emoji: '🌸', angle: -30 },
+              { emoji: '✨', angle: 42 },
+              { emoji: '🧴', angle: 130 },
+              { emoji: '💄', angle: 210 },
+              { emoji: '🎀', angle: 290 },
             ].map(({ emoji, angle }, i) => {
               const rad = (angle * Math.PI) / 180;
-              const r = 160;
+              const r = 175;
               const x = Math.cos(rad) * r;
               const y = Math.sin(rad) * r;
               return (
@@ -201,19 +208,36 @@ export default function Hero() {
                   key={i}
                   initial={{ opacity: 0, scale: 0 }}
                   animate={{ opacity: 1, scale: 1 }}
-                  transition={{ delay: 0.4 + i * 0.1, type: 'spring', stiffness: 200 }}
-                  className="absolute w-12 h-12 rounded-full flex items-center justify-center text-xl shadow-md"
+                  transition={{ delay: 0.5 + i * 0.12, type: 'spring', stiffness: 200 }}
+                  whileHover={{ scale: 1.2 }}
+                  className="absolute w-11 h-11 rounded-full flex items-center justify-center text-lg shadow-lg"
                   style={{
                     background: 'white',
                     top: '50%',
                     left: '50%',
                     transform: `translate(calc(-50% + ${x}px), calc(-50% + ${y}px))`,
+                    boxShadow: '0 4px 16px rgba(226,115,57,0.15)',
                   }}
                 >
                   {emoji}
                 </motion.div>
               );
             })}
+          </motion.div>
+
+          {/* Name badge */}
+          <motion.div
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 1, duration: 0.6 }}
+            className="absolute -bottom-2 left-1/2 -translate-x-1/2 flex items-center gap-2 px-5 py-2.5 rounded-full shadow-xl"
+            style={{ background: 'white', whiteSpace: 'nowrap' }}
+          >
+            <span className="text-base">🌸</span>
+            <div className="text-center leading-tight">
+              <p className="font-semibold text-sm" style={{ color: '#3D2B1F' }}>Mariele</p>
+              <p className="font-script text-xs" style={{ color: '#E27339' }}>fundadora</p>
+            </div>
           </motion.div>
 
           {/* Floating info cards */}
