@@ -3,7 +3,7 @@ import { motion } from 'framer-motion';
 import { ShoppingBag, Package, Star } from 'lucide-react';
 import { supabase } from '@/api/supabaseClient';
 
-const WHATSAPP = '5511999999999';
+const WHATSAPP = '5548998506916';
 
 const mockProducts = [
   { id: 1, name: 'Kit Hidratação Luxo', brand: 'Damarie', category: 'Kit', selling_price: 89.90, image_url: null, status: 'em_estoque' },

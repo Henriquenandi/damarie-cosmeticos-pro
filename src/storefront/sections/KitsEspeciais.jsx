@@ -1,7 +1,7 @@
 import { motion } from 'framer-motion';
 import { ArrowRight } from 'lucide-react';
 
-const WHATSAPP = '5511999999999';
+const WHATSAPP = '5548998506916';
 
 const kits = [
   {

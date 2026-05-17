@@ -1,7 +1,7 @@
 import { motion } from 'framer-motion';
 import { ShoppingBag, MessageCircle, ArrowRight } from 'lucide-react';
 
-const WHATSAPP = '5511999999999';
+const WHATSAPP = '5548998506916';
 
 export default function CTAFinal() {
   return (

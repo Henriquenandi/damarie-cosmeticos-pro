@@ -1,7 +1,7 @@
 import { motion } from 'framer-motion';
 import { Instagram, Facebook, MessageCircle, Heart } from 'lucide-react';
 
-const WHATSAPP = '5511999999999';
+const WHATSAPP = '5548998506916';
 const INSTAGRAM = 'https://instagram.com/damariepresentes';
 const FACEBOOK = 'https://facebook.com/damariepresentes';
 

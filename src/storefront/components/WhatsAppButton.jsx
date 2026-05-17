@@ -2,7 +2,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useState } from 'react';
 import { X, MessageCircle } from 'lucide-react';
 
-const WHATSAPP = '5511999999999';
+const WHATSAPP = '5548998506916';
 
 export default function WhatsAppButton() {
   const [open, setOpen] = useState(false);

@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Menu, X, ShoppingBag } from 'lucide-react';
 
-const WHATSAPP = '5511999999999';
+const WHATSAPP = '5548998506916';
 const WHATSAPP_URL = `https://wa.me/${WHATSAPP}?text=Ol%C3%A1%2C%20vim%20pelo%20site%20e%20gostaria%20de%20conhecer%20os%20produtos%20da%20Damarie!`;
 
 const navLinks = [

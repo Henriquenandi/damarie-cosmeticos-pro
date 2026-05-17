@@ -1,7 +1,7 @@
 import { motion } from 'framer-motion';
 import { ArrowRight, Star, Heart, Sparkles } from 'lucide-react';
 
-const WHATSAPP = '5511999999999';
+const WHATSAPP = '5548998506916';
 const WHATSAPP_URL = `https://wa.me/${WHATSAPP}?text=Ol%C3%A1%2C%20quero%20conhecer%20os%20produtos%20da%20Damarie!`;
 
 const fadeUp = {
