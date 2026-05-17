@@ -4,7 +4,6 @@ import { Star, Quote } from 'lucide-react';
 const depoimentos = [
   {
     nome: 'Ana Carolina',
-    cidade: 'São Paulo, SP',
     nota: 5,
     texto:
       'Comprei um kit personalizado para o aniversário da minha mãe e ela amou! A embalagem era linda e os produtos de ótima qualidade. Com certeza comprarei muito mais.',
@@ -14,7 +13,6 @@ const depoimentos = [
   },
   {
     nome: 'Fernanda Lima',
-    cidade: 'Rio de Janeiro, RJ',
     nota: 5,
     texto:
       'Atendimento incrível! A Damarie me ajudou a montar o kit perfeito para o Dia das Mães. Chegou na data combinada, super bem embalado. Recomendo demais!',
@@ -24,7 +22,6 @@ const depoimentos = [
   },
   {
     nome: 'Juliana Mendes',
-    cidade: 'Belo Horizonte, MG',
     nota: 5,
     texto:
       'Os sabonetes artesanais são maravilhosos, cheiro incrível e duram muito. Já indiquei para todas as minhas amigas. Qualidade premium com preço justo!',
@@ -34,7 +31,6 @@ const depoimentos = [
   },
   {
     nome: 'Mariana Costa',
-    cidade: 'Curitiba, PR',
     nota: 5,
     texto:
       'Presentes que fazem parte da memória afetiva. Cada vez que uso os produtos me lembro da ocasião especial. Damarie é sinônimo de carinho e qualidade.',
@@ -44,7 +40,6 @@ const depoimentos = [
   },
   {
     nome: 'Patricia Souza',
-    cidade: 'Campinas, SP',
     nota: 5,
     texto:
       'Comprei para presentear a noiva na despedida de solteira. Todo mundo ficou encantado com os produtos. A personalização com o nome dela foi um toque especial!',
@@ -54,7 +49,6 @@ const depoimentos = [
   },
   {
     nome: 'Roberta Alves',
-    cidade: 'Porto Alegre, RS',
     nota: 5,
     texto:
       'Produto chegou antes do prazo e melhor do que eu esperava. A embalagem é premium e os cosméticos são de excelente qualidade. Super recomendo a Damarie!',
@@ -158,14 +152,9 @@ export default function Depoimentos() {
                 >
                   {dep.inicial}
                 </div>
-                <div>
-                  <p className="font-semibold text-sm" style={{ color: '#3D2B1F' }}>
-                    {dep.nome}
-                  </p>
-                  <p className="text-xs" style={{ color: '#B09080' }}>
-                    {dep.cidade}
-                  </p>
-                </div>
+                <p className="font-semibold text-sm" style={{ color: '#3D2B1F' }}>
+                  {dep.nome}
+                </p>
               </div>
             </motion.div>
           ))}
