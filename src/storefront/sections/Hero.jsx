@@ -197,7 +197,6 @@ export default function Hero() {
               { emoji: '✨', angle: 42 },
               { emoji: '🧴', angle: 130 },
               { emoji: '💄', angle: 210 },
-              { emoji: '🎀', angle: 290 },
             ].map(({ emoji, angle }, i) => {
               const rad = (angle * Math.PI) / 180;
               const r = 175;
