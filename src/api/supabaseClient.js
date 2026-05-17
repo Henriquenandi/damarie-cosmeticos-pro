@@ -49,20 +49,17 @@ export const supabaseHelpers = {
     if (import.meta.env.VITE_DEMO_MODE === 'true') {
       throw new Error('Modo demonstração — funcionalidade desabilitada')
     }
-    // Generate UUID for id if not provided
     const dataWithId = {
       ...data,
       id: data.id || generateUUID()
     };
-    
-    const { data: result, error } = await supabase
+
+    const { error } = await supabase
       .from(table)
       .insert(dataWithId)
-      .select()
-      .single()
-    
+
     if (error) throw error
-    return result
+    return dataWithId
   },
 
   async update(table, id, data) {
