@@ -69,15 +69,13 @@ export const supabaseHelpers = {
     if (import.meta.env.VITE_DEMO_MODE === 'true') {
       throw new Error('Modo demonstração — funcionalidade desabilitada')
     }
-    const { data: result, error } = await supabase
+    const { error } = await supabase
       .from(table)
       .update(data)
       .eq('id', id)
-      .select()
-      .single()
-    
+
     if (error) throw error
-    return result
+    return { id, ...data }
   },
 
   async delete(table, id) {
