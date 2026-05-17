@@ -27,8 +27,11 @@ import {
   History
 } from 'lucide-react';
 import { Skeleton } from "@/components/ui/skeleton";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import moment from 'moment';
 import { useNavigate } from 'react-router-dom';
+import CustomerForm from '@/components/customers/CustomerForm';
+import { UserPlus } from 'lucide-react';
 
 const paymentIcons = {
   dinheiro: Banknote,
@@ -53,6 +56,7 @@ const paymentLabels = {
 
 export default function Sales() {
   const navigate = useNavigate();
+  const [showNewCustomer, setShowNewCustomer] = useState(false);
   const [search, setSearch] = useState('');
   const [paymentFilter, setPaymentFilter] = useState('');
   const [periodFilter, setPeriodFilter] = useState('');
@@ -119,14 +123,36 @@ export default function Sales() {
           <h1 className="text-2xl font-bold text-slate-800">Histórico de Vendas</h1>
           <p className="text-slate-500 text-sm">{filteredSales.length} vendas</p>
         </div>
-        <Button
-          onClick={() => navigate(createPageUrl('NewSale'))}
-          className="bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700"
-        >
-          <Plus className="w-5 h-5 lg:mr-2" />
-          <span className="hidden lg:inline">Nova Venda</span>
-        </Button>
+        <div className="flex items-center gap-2">
+          <Button
+            variant="outline"
+            onClick={() => setShowNewCustomer(true)}
+            className="border-2 border-purple-200 text-purple-700 hover:bg-purple-50"
+          >
+            <UserPlus className="w-4 h-4 lg:mr-2" />
+            <span className="hidden lg:inline">Novo Cliente</span>
+          </Button>
+          <Button
+            onClick={() => navigate(createPageUrl('NewSale'))}
+            className="bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700"
+          >
+            <Plus className="w-5 h-5 lg:mr-2" />
+            <span className="hidden lg:inline">Nova Venda</span>
+          </Button>
+        </div>
       </div>
+
+      <Dialog open={showNewCustomer} onOpenChange={setShowNewCustomer}>
+        <DialogContent className="max-w-lg">
+          <DialogHeader>
+            <DialogTitle>Cadastrar Novo Cliente</DialogTitle>
+          </DialogHeader>
+          <CustomerForm
+            onSave={() => setShowNewCustomer(false)}
+            onCancel={() => setShowNewCustomer(false)}
+          />
+        </DialogContent>
+      </Dialog>
 
       {/* Summary Cards */}
       <div className="grid grid-cols-2 gap-4">
