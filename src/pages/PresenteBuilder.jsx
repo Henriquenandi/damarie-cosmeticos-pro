@@ -29,7 +29,8 @@ import {
   Percent,
   DollarSign,
   Receipt,
-  TrendingUp
+  TrendingUp,
+  Wrench
 } from 'lucide-react';
 import { toast } from "sonner";
 import {
@@ -54,8 +55,8 @@ export default function PresenteBuilder() {
     quantity: 1,
     cosmetic_items: [],
     mercadoria_items: [],
-    additional_costs: { labor: 0, other: 0 },
     card_fee_percent: 0,
+    labor_fee_percent: 0,
     margin_percentage: 30,
     final_price: 0,
     status: 'active',
@@ -88,12 +89,8 @@ export default function PresenteBuilder() {
     if (presente) {
       setFormData({
         ...presente,
-        additional_costs: {
-          labor: 0,
-          other: 0,
-          ...(presente.additional_costs || {})
-        },
-        card_fee_percent: presente.card_fee_percent || 0
+        card_fee_percent: presente.card_fee_percent || 0,
+        labor_fee_percent: presente.labor_fee_percent || 0
       });
     }
   }, [presente]);
@@ -107,9 +104,7 @@ export default function PresenteBuilder() {
     sum + ((item.unit_cost || 0) * (item.quantity || 0)), 0
   );
 
-  const additionalCostsTotal = (formData.additional_costs.labor || 0) + (formData.additional_costs.other || 0);
-
-  const totalCost = cosmeticCost + mercadoriaCost + additionalCostsTotal;
+  const totalCost = cosmeticCost + mercadoriaCost;
 
   const suggestedPrice = totalCost * (1 + (formData.margin_percentage || 0) / 100);
 
@@ -117,7 +112,9 @@ export default function PresenteBuilder() {
 
   const cardFeeAmount = finalPrice * (parseFloat(formData.card_fee_percent) || 0) / 100;
 
-  const estimatedProfit = finalPrice - totalCost - cardFeeAmount;
+  const laborAmount = finalPrice * (parseFloat(formData.labor_fee_percent) || 0) / 100;
+
+  const estimatedProfit = finalPrice - totalCost - cardFeeAmount - laborAmount;
 
   const handleImageUpload = async (e) => {
     const file = e.target.files?.[0];
@@ -221,6 +218,7 @@ export default function PresenteBuilder() {
         suggested_price: suggestedPrice,
         final_price: finalPrice,
         card_fee_amount: cardFeeAmount,
+        labor_amount: laborAmount,
         estimated_profit: estimatedProfit
       };
 
@@ -430,20 +428,32 @@ export default function PresenteBuilder() {
           </Select>
         </div>
 
-        {/* Card Fee & Margin */}
+        {/* Card Fee, Labor & Margin */}
         <div className="bg-white rounded-2xl border border-slate-100 p-6 space-y-4">
           <div className="flex items-center gap-2">
             <Percent className="w-5 h-5 text-pink-500" />
             <h3 className="font-semibold text-slate-800">Configuração de Preço</h3>
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
+          <div className="space-y-4">
             <div>
               <Label>Taxa do Cartão (%)</Label>
               <Input
                 type="number"
                 value={formData.card_fee_percent}
                 onChange={(e) => setFormData({ ...formData, card_fee_percent: parseFloat(e.target.value) || 0 })}
+                min="0"
+                step="0.01"
+                placeholder="0%"
+                className="mt-1"
+              />
+            </div>
+            <div>
+              <Label>Mão de obra (%)</Label>
+              <Input
+                type="number"
+                value={formData.labor_fee_percent}
+                onChange={(e) => setFormData({ ...formData, labor_fee_percent: parseFloat(e.target.value) || 0 })}
                 min="0"
                 step="0.01"
                 placeholder="0%"
@@ -476,44 +486,6 @@ export default function PresenteBuilder() {
           </p>
         </div>
 
-        {/* Additional Costs */}
-        <div className="bg-white rounded-2xl border border-slate-100 p-6 space-y-4">
-          <h3 className="font-semibold text-slate-800">Custos Adicionais (opcional)</h3>
-
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <Label>Mão de obra</Label>
-              <Input
-                type="number"
-                value={formData.additional_costs.labor}
-                onChange={(e) => setFormData({
-                  ...formData,
-                  additional_costs: { ...formData.additional_costs, labor: parseFloat(e.target.value) || 0 }
-                })}
-                min="0"
-                step="0.01"
-                placeholder="R$ 0.00"
-                className="mt-1"
-              />
-            </div>
-            <div>
-              <Label>Outros</Label>
-              <Input
-                type="number"
-                value={formData.additional_costs.other}
-                onChange={(e) => setFormData({
-                  ...formData,
-                  additional_costs: { ...formData.additional_costs, other: parseFloat(e.target.value) || 0 }
-                })}
-                min="0"
-                step="0.01"
-                placeholder="R$ 0.00"
-                className="mt-1"
-              />
-            </div>
-          </div>
-        </div>
-
         {/* Pricing */}
         <div className="bg-white rounded-2xl border border-slate-100 p-6 space-y-4">
           <div className="flex items-center gap-2">
@@ -530,10 +502,6 @@ export default function PresenteBuilder() {
               <span className="text-slate-600">Custo mercadorias:</span>
               <span className="font-medium">R$ {mercadoriaCost.toFixed(2)}</span>
             </div>
-            <div className="flex justify-between">
-              <span className="text-slate-600">Custos adicionais:</span>
-              <span className="font-medium">R$ {additionalCostsTotal.toFixed(2)}</span>
-            </div>
             <div className="flex justify-between pt-2 border-t border-slate-200">
               <span className="text-slate-800 font-semibold">Custo Total:</span>
               <span className="font-bold text-slate-800">R$ {totalCost.toFixed(2)}</span>
@@ -547,6 +515,7 @@ export default function PresenteBuilder() {
                 data={[
                   { name: 'Custo', value: totalCost, color: '#3B82F6' },
                   { name: 'Lucro', value: Math.max(estimatedProfit, 0), color: '#10B981' },
+                  { name: 'Mão de obra', value: laborAmount, color: '#F59E0B' },
                   { name: 'Taxa', value: cardFeeAmount, color: '#EF4444' },
                 ]}
                 margin={{ top: 8, right: 8, left: 8, bottom: 0 }}
@@ -561,6 +530,7 @@ export default function PresenteBuilder() {
                   {[
                     { color: '#3B82F6' },
                     { color: '#10B981' },
+                    { color: '#F59E0B' },
                     { color: '#EF4444' },
                   ].map((entry, index) => (
                     <Cell key={index} fill={entry.color} />
@@ -585,6 +555,17 @@ export default function PresenteBuilder() {
                 <span className="font-medium">R$ {estimatedProfit.toFixed(2)}</span>
                 {finalPrice > 0 && (
                   <p className="text-xs text-slate-400">{((estimatedProfit / finalPrice) * 100).toFixed(1)}%</p>
+                )}
+              </div>
+            </div>
+            <div className="flex items-center justify-between">
+              <span className="flex items-center gap-2 text-slate-600">
+                <Wrench className="w-4 h-4 text-amber-500" /> Mão de obra:
+              </span>
+              <div className="text-right">
+                <span className="font-medium">R$ {laborAmount.toFixed(2)}</span>
+                {finalPrice > 0 && (
+                  <p className="text-xs text-slate-400">{(parseFloat(formData.labor_fee_percent) || 0).toFixed(1)}%</p>
                 )}
               </div>
             </div>
