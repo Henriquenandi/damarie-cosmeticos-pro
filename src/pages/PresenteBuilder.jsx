@@ -15,19 +15,32 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { 
-  ArrowLeft, 
-  Loader2, 
-  Upload, 
+import {
+  ArrowLeft,
+  Loader2,
+  Upload,
   X,
   Plus,
   Trash2,
   Package,
   Package2,
   Gift,
-  Calculator
+  Calculator,
+  Percent,
+  DollarSign,
+  Receipt,
+  TrendingUp
 } from 'lucide-react';
 import { toast } from "sonner";
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  Tooltip,
+  ResponsiveContainer,
+  Cell
+} from 'recharts';
 
 export default function PresenteBuilder() {
   const navigate = useNavigate();
@@ -42,6 +55,7 @@ export default function PresenteBuilder() {
     cosmetic_items: [],
     mercadoria_items: [],
     additional_costs: { labor: 0, other: 0 },
+    card_fee_percent: 0,
     margin_percentage: 30,
     final_price: 0,
     status: 'active',
@@ -74,7 +88,12 @@ export default function PresenteBuilder() {
     if (presente) {
       setFormData({
         ...presente,
-        additional_costs: presente.additional_costs || { labor: 0, other: 0 }
+        additional_costs: {
+          labor: 0,
+          other: 0,
+          ...(presente.additional_costs || {})
+        },
+        card_fee_percent: presente.card_fee_percent || 0
       });
     }
   }, [presente]);
@@ -89,14 +108,16 @@ export default function PresenteBuilder() {
   );
 
   const additionalCostsTotal = (formData.additional_costs.labor || 0) + (formData.additional_costs.other || 0);
-  
+
   const totalCost = cosmeticCost + mercadoriaCost + additionalCostsTotal;
-  
+
   const suggestedPrice = totalCost * (1 + (formData.margin_percentage || 0) / 100);
-  
+
   const finalPrice = formData.final_price || suggestedPrice;
-  
-  const estimatedProfit = finalPrice - totalCost;
+
+  const cardFeeAmount = finalPrice * (parseFloat(formData.card_fee_percent) || 0) / 100;
+
+  const estimatedProfit = finalPrice - totalCost - cardFeeAmount;
 
   const handleImageUpload = async (e) => {
     const file = e.target.files?.[0];
@@ -199,6 +220,7 @@ export default function PresenteBuilder() {
         total_cost: totalCost,
         suggested_price: suggestedPrice,
         final_price: finalPrice,
+        card_fee_amount: cardFeeAmount,
         estimated_profit: estimatedProfit
       };
 
@@ -408,10 +430,56 @@ export default function PresenteBuilder() {
           </Select>
         </div>
 
+        {/* Card Fee & Margin */}
+        <div className="bg-white rounded-2xl border border-slate-100 p-6 space-y-4">
+          <div className="flex items-center gap-2">
+            <Percent className="w-5 h-5 text-pink-500" />
+            <h3 className="font-semibold text-slate-800">Configuração de Preço</h3>
+          </div>
+
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <Label>Taxa do Cartão (%)</Label>
+              <Input
+                type="number"
+                value={formData.card_fee_percent}
+                onChange={(e) => setFormData({ ...formData, card_fee_percent: parseFloat(e.target.value) || 0 })}
+                min="0"
+                step="0.01"
+                placeholder="0%"
+                className="mt-1"
+              />
+            </div>
+            <div>
+              <Label>Margem de Lucro (%)</Label>
+              <Input
+                type="number"
+                value={formData.margin_percentage}
+                onChange={(e) => {
+                  const newMargin = parseFloat(e.target.value) || 0;
+                  const newSuggested = totalCost * (1 + newMargin / 100);
+                  const isFollowingSuggested = !formData.final_price || formData.final_price === suggestedPrice;
+                  setFormData({
+                    ...formData,
+                    margin_percentage: newMargin,
+                    final_price: isFollowingSuggested ? newSuggested : formData.final_price
+                  });
+                }}
+                min="0"
+                step="1"
+                className="mt-1"
+              />
+            </div>
+          </div>
+          <p className="text-xs text-slate-500">
+            Preço sugerido: R$ {suggestedPrice.toFixed(2)}
+          </p>
+        </div>
+
         {/* Additional Costs */}
         <div className="bg-white rounded-2xl border border-slate-100 p-6 space-y-4">
           <h3 className="font-semibold text-slate-800">Custos Adicionais (opcional)</h3>
-          
+
           <div className="grid grid-cols-2 gap-4">
             <div>
               <Label>Mão de obra</Label>
@@ -472,19 +540,71 @@ export default function PresenteBuilder() {
             </div>
           </div>
 
-          <div>
-            <Label>Margem de Lucro (%)</Label>
-            <Input
-              type="number"
-              value={formData.margin_percentage}
-              onChange={(e) => setFormData({ ...formData, margin_percentage: parseFloat(e.target.value) || 0 })}
-              min="0"
-              step="1"
-              className="mt-1"
-            />
-            <p className="text-xs text-slate-500 mt-1">
-              Preço sugerido: R$ {suggestedPrice.toFixed(2)}
-            </p>
+          {/* Cost x Profit x Fee chart */}
+          <div className="h-48">
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart
+                data={[
+                  { name: 'Custo', value: totalCost, color: '#3B82F6' },
+                  { name: 'Lucro', value: Math.max(estimatedProfit, 0), color: '#10B981' },
+                  { name: 'Taxa', value: cardFeeAmount, color: '#EF4444' },
+                ]}
+                margin={{ top: 8, right: 8, left: 8, bottom: 0 }}
+              >
+                <XAxis dataKey="name" stroke="#64748b" fontSize={12} axisLine={false} tickLine={false} />
+                <YAxis hide />
+                <Tooltip
+                  formatter={(value) => `R$ ${value.toFixed(2)}`}
+                  contentStyle={{ borderRadius: 12, border: '1px solid #e2e8f0' }}
+                />
+                <Bar dataKey="value" radius={[8, 8, 0, 0]}>
+                  {[
+                    { color: '#3B82F6' },
+                    { color: '#10B981' },
+                    { color: '#EF4444' },
+                  ].map((entry, index) => (
+                    <Cell key={index} fill={entry.color} />
+                  ))}
+                </Bar>
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+
+          <div className="space-y-2 text-sm">
+            <div className="flex items-center justify-between">
+              <span className="flex items-center gap-2 text-slate-600">
+                <DollarSign className="w-4 h-4 text-blue-500" /> Custo:
+              </span>
+              <span className="font-medium">R$ {totalCost.toFixed(2)}</span>
+            </div>
+            <div className="flex items-center justify-between">
+              <span className="flex items-center gap-2 text-slate-600">
+                <TrendingUp className="w-4 h-4 text-emerald-500" /> Lucro:
+              </span>
+              <div className="text-right">
+                <span className="font-medium">R$ {estimatedProfit.toFixed(2)}</span>
+                {finalPrice > 0 && (
+                  <p className="text-xs text-slate-400">{((estimatedProfit / finalPrice) * 100).toFixed(1)}%</p>
+                )}
+              </div>
+            </div>
+            <div className="flex items-center justify-between">
+              <span className="flex items-center gap-2 text-slate-600">
+                <Receipt className="w-4 h-4 text-red-500" /> Taxa:
+              </span>
+              <div className="text-right">
+                <span className="font-medium">R$ {cardFeeAmount.toFixed(2)}</span>
+                {finalPrice > 0 && (
+                  <p className="text-xs text-slate-400">{(parseFloat(formData.card_fee_percent) || 0).toFixed(1)}%</p>
+                )}
+              </div>
+            </div>
+            <div className="flex items-center justify-between pt-2 border-t border-slate-200">
+              <span className="flex items-center gap-2 text-slate-800 font-semibold">
+                <Calculator className="w-4 h-4" /> Total:
+              </span>
+              <span className="font-bold text-slate-800">R$ {finalPrice.toFixed(2)}</span>
+            </div>
           </div>
 
           <div>
