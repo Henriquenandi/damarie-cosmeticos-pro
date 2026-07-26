@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { base44 } from '@/api/supabaseClient';
+import { uploadImage } from '@/utils/imageHelpers';
 import { useNavigate } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import { Button } from "@/components/ui/button";
@@ -122,11 +123,11 @@ export default function PresenteBuilder() {
 
     setUploading(true);
     try {
-      const { file_url } = await base44.integrations.Core.UploadFile({ file });
+      const file_url = await uploadImage(file, 'presente');
       setFormData({ ...formData, image_url: file_url });
       toast.success('Imagem enviada!');
     } catch (error) {
-      toast.error('Erro ao enviar imagem');
+      toast.error(error.message || 'Erro ao enviar imagem');
     } finally {
       setUploading(false);
     }

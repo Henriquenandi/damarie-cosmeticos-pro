@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import { base44 } from '@/api/supabaseClient';
+import { uploadImage } from '@/utils/imageHelpers';
 import { useNavigate } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import { Button } from "@/components/ui/button";
@@ -48,11 +49,11 @@ export default function CatalogScan() {
 
     setUploading(true);
     try {
-      const { file_url } = await base44.integrations.Core.UploadFile({ file });
+      const file_url = await uploadImage(file, 'document');
       setImageUrl(file_url);
       toast.success('Imagem carregada!');
     } catch (error) {
-      toast.error('Erro ao carregar imagem');
+      toast.error(error.message || 'Erro ao carregar imagem');
     } finally {
       setUploading(false);
     }

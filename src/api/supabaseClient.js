@@ -624,7 +624,7 @@ export const base44 = {
   // FILE UPLOADS (mimics base44.integrations.Core.UploadFile)
   integrations: {
     Core: {
-      async UploadFile({ file, bucket = 'damarie-files' }) {
+      async UploadFile({ file, bucket = 'damarie-documents' }) {
         const fileName = `${Date.now()}_${file.name}`
         const { data, error } = await supabase.storage
           .from(bucket)
